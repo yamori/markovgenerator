@@ -9,14 +9,35 @@ import junit.framework.TestCase;
  */
 public class MarkovTest extends TestCase {
 	
+	String testSubString = "test";
+	Character testChar = 'c';
+	Character secondTestChar = 'd';
+	Markov markov;
+	
 	public void testConstructor() {
-		String testSubString = "test";
-		Character testChar = 'c';
-		Markov m = new Markov(testSubString, testChar);
+		markov = new Markov(testSubString, testChar);
 		
-		assertTrue(m.getCount() == 1);
-		assertTrue(m.getSubString().equalsIgnoreCase(testSubString));
-		assertTrue(m.getFrequencyCount(testChar) == 1);
+		assertTrue(markov.getCount() == 1);
+		assertTrue(markov.getSubString().equalsIgnoreCase(testSubString));
+		assertTrue(markov.getFrequencyCount(testChar) == 1);
+	}
+	
+	public void testAdd() {
+		markov = new Markov(testSubString, testChar);
+		markov.add(secondTestChar);
+		assertTrue(markov.getCount() == 2);
+		assertTrue(markov.getSubsequentMap().size()==2);
+		System.out.println(markov.toString());
+	}
+	
+	public void testRandomChar() {
+		markov = new Markov(testSubString, testChar);
+		assertTrue(markov.getRandomSubsequentChar()==testChar);
+		for (int n=0; n<10; n++) {
+			markov.add(testChar);
+		}
+		// Still should return the same char
+		assertTrue(markov.getRandomSubsequentChar()==testChar);
 	}
 
 }
