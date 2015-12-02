@@ -1,0 +1,8 @@
+TextGenerator.Read in the text file
+TextGenerator.Build up the HashMap
+MarkovHashMap.Implement the random Key method in Markov Hash Map
+TextGenerator.Build the new text (seperate method)
+TextGenerator.Junits?
+All.Tidy up, comment
+Readme doc
+Github
