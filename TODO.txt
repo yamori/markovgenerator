@@ -1,5 +1,7 @@
 TextGenerator.Read in the text file
 TextGenerator.Build up the HashMap
+HERE
+Test. A tiny markov table, just to visualize etc.
 MarkovHashMap.Implement the random Key method in Markov Hash Map
 TextGenerator.Build the new text (seperate method)
 TextGenerator.Junits?

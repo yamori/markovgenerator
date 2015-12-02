@@ -98,11 +98,10 @@ public class MarkovHashMap<K, V> {
 		primes.add(842879579);
 		primes.add(1685759167);
 	}
-	
+
 	private void resize() {
 		MarkovHashMap<K, V> tmp = new MarkovHashMap<K, V>(primeHelper(hashMapTable.length), (float) 0.75);
-		
-		
+
 		for (LinkedList<HashMapEntry> hashMapEntryList : hashMapTable) {
 			for (HashMapEntry hashMapEntry : hashMapEntryList) {
 				K key = hashMapEntry.key;
@@ -114,7 +113,7 @@ public class MarkovHashMap<K, V> {
 		this.hashMapTableSize = tmp.hashMapTableSize;
 		this.loadFactor = tmp.loadFactor;
 	}
-	
+
 	// Find the next prime for resizing the hashMapTable
 	public int primeHelper(int i) {
 		int ret = -1;
@@ -150,20 +149,55 @@ public class MarkovHashMap<K, V> {
 			bin.set(index, entry);
 		} else {
 			bin.add(entry);
+			// Only add to the hashMapTableSize if a NEW entry is added. (A
+			// subsequent hit on a particular substring should not count against
+			// the hash, even though it builds up the underlying Markov.)
+			hashMapTableSize++;
 		}
-		hashMapTableSize++;
+
 		if (((double) hashMapTableSize) / ((double) hashMapTable.length) >= loadFactor) {
-			 resize();
+			resize();
 		}
 		return ret;
 	}
 	
+	public V get(K key) {
+		// Return the object V based on K key, if not found returns null
+		V returnObject = null;
+		HashMapEntry queryObj = new HashMapEntry(key,null);
+		int hashCode = Math.abs(key.hashCode());
+		int mapping = hashCode % (hashMapTable.length);
+		LinkedList<HashMapEntry> bin = hashMapTable[mapping];
+		for (HashMapEntry hashMapEntry : bin) {
+			if (hashMapEntry.equals(queryObj)) {
+				returnObject = hashMapEntry.value;
+				break;
+			}
+		}
+		return returnObject;
+	}
+
+	public boolean containsKey(K queryKey) {
+		// Determines if the MarkovHashMap already contains the <K>queryKey
+		boolean returnResult = false;
+
+		HashMapEntry testEntry = new HashMapEntry(queryKey, null);
+		int hashCode = Math.abs(queryKey.hashCode());
+		int mapping = hashCode % (hashMapTable.length);
+		LinkedList<HashMapEntry> bin = hashMapTable[mapping];
+		if (bin.contains(testEntry)) {
+			returnResult = true;
+		}
+
+		return returnResult;
+	}
+
 	public String toString() {
 		String returnString = "MarkovHashMap.toString()";
-		for (int n=0; n<hashMapTable.length; n++) {
+		for (int n = 0; n < hashMapTable.length; n++) {
 			returnString += "\n bin_" + n;
 			LinkedList<HashMapEntry> bin = hashMapTable[n];
-			for (int m=0; m<bin.size(); m++) {
+			for (int m = 0; m < bin.size(); m++) {
 				HashMapEntry hashMap = bin.get(m);
 				returnString += "\n  " + hashMap.key + " " + hashMap.value.toString();
 			}
