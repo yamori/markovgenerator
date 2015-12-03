@@ -1,10 +1,12 @@
 TextGenerator.Read in the text file
 TextGenerator.Build up the HashMap
-HERE
+
 Test. A tiny markov table, just to visualize etc.
 MarkovHashMap.Implement the random Key method in Markov Hash Map
+
 TextGenerator.Build the new text (seperate method)
-TextGenerator.Junits?
-All.Tidy up, comment
+TextGenerator.Junits? for when the markov hashmap is small, execution still completes but with generated text less than desired length.
+HERE
+All.Tidy up, comment with javadocs for all public methods.
 Readme doc
 Github

@@ -27,6 +27,7 @@ public class MarkovTest extends TestCase {
 		markov.add(secondTestChar);
 		assertTrue(markov.getCount() == 2);
 		assertTrue(markov.getSubsequentMap().size()==2);
+		System.out.println("*** Testing the Markov.add()");
 		System.out.println(markov.toString());
 	}
 	

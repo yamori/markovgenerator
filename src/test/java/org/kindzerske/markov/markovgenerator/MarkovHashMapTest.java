@@ -25,6 +25,7 @@ public class MarkovHashMapTest extends TestCase {
 			markovHashMap.put("" + n, n);
 		}
 
+		System.out.println("*** Testing the MarkovHashMap construction and put()");
 		System.out.println(markovHashMap.toString());
 		// The amortization should take this to the next prime number at least
 		// twice as large as previous size.
@@ -34,22 +35,34 @@ public class MarkovHashMapTest extends TestCase {
 	public void testContainsKeyMethod() {
 		String existingKey = "abc";
 		String nonExistingKey = "def";
-		
+
 		MarkovHashMap<String, Integer> markovHashMap = new MarkovHashMap<String, Integer>(11, (float) 0.5);
-		
+
 		markovHashMap.put(existingKey, 1);
 		// nonExistingKey is not 'put' into the hash
-		
-		assertTrue(markovHashMap.containsKey(nonExistingKey)==false);
-		assertTrue(markovHashMap.containsKey(existingKey)==true);
+
+		assertTrue(markovHashMap.containsKey(nonExistingKey) == false);
+		assertTrue(markovHashMap.containsKey(existingKey) == true);
 	}
-	
+
 	public void testGetMethod() {
 		String existingKey = "abc";
 		int existingValue = 2;
 		MarkovHashMap<String, Integer> markovHashMap = new MarkovHashMap<String, Integer>(11, (float) 0.5);
 		markovHashMap.put(existingKey, existingValue);
-		assertTrue(markovHashMap.get(existingKey)==existingValue);
+		assertTrue(markovHashMap.get(existingKey) == existingValue);
+	}
+
+	public void testGetRandomKeyMethod() {
+		String existingKey = "abc";
+		int existingValue = 2;
+		MarkovHashMap<String, Integer> markovHashMap = new MarkovHashMap<String, Integer>(11, (float) 0.5);
+		markovHashMap.put(existingKey, existingValue);
+
+		// Should return the only entry in the hashmap. (But horribly
+		// Inefficiently because it uses randomInt to index through the hashmap
+		// and LinkedLists.
+		assertTrue(markovHashMap.getRandomKey().equalsIgnoreCase(existingKey));
 	}
 
 }

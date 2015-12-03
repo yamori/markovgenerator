@@ -24,6 +24,7 @@ public class TextGenerator {
 	private String textFileLocation;
 	private String originalTextFile;
 	MarkovHashMap<String, Markov> markovHashMap;
+	private String generatedText;
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
@@ -48,8 +49,13 @@ public class TextGenerator {
 		System.out.print(" Choose from above texts: ");
 		int textN = scanner.nextInt();
 		System.out.println();
+		
+		scanner.close();
 
 		TextGenerator textGenerator = new TextGenerator(k, m, files[textN].toString());
+		System.out.println(String.format("*** Final Generated Text (kOrder=%d, textLength=%d, textFileLocation='%s' )", k, m,
+				files[textN].toString()));
+		System.out.println( textGenerator.getGeneratedText() );
 	}
 
 	/**
@@ -75,7 +81,8 @@ public class TextGenerator {
 		this.markovHashMap = new MarkovHashMap<String, Markov>(11, (float) 0.75);
 
 		constructMarkovHashMap();
-		// System.out.println(this.markovHashMap.toString());
+
+		this.generatedText = generateString();
 	}
 
 	private void readTextFile() {
@@ -110,8 +117,6 @@ public class TextGenerator {
 			String subString = this.originalTextFile.substring(n, n + this.kOrder);
 			Character subsequentChat = this.originalTextFile.charAt(n + this.kOrder);
 
-			System.out.println(subString + "," + subsequentChat);
-
 			if (!this.markovHashMap.containsKey(subString)) {
 				// MarkovHashMap does not contain the subString, simple add
 				this.markovHashMap.put(subString, new Markov(subString, subsequentChat));
@@ -123,5 +128,38 @@ public class TextGenerator {
 				this.markovHashMap.put(subString, markov);
 			}
 		}
+	}
+
+	/**
+	 * A valid MarkovHashMap must be created before this method is called, which
+	 * is done by using the TextGenerator constructor.
+	 */
+	private String generateString() {
+		StringBuilder generatedStringBuilder = new StringBuilder();
+
+		// Start with a random K key from the existing MarkovHashMap. This
+		// ensures a valid starting point which will have at least one
+		// subsequent character. Depending on the nature and length of the
+		// original text, this method will attempt to generate a text of length
+		// this.textLength
+		String subString = this.markovHashMap.getRandomKey();
+		generatedStringBuilder.append(subString);
+
+		Markov markov = this.markovHashMap.get(subString);
+		while (markov != null && generatedStringBuilder.length() < this.textLength) {
+			System.out.println(generatedStringBuilder);
+			// Exits if no subsequent Markov is found for the given subString
+			generatedStringBuilder.append(markov.getRandomSubsequentChar());
+			subString = generatedStringBuilder.substring(generatedStringBuilder.length() - this.kOrder,
+					generatedStringBuilder.length());
+			// Find the next Markov
+			markov = this.markovHashMap.get(subString);
+		}
+
+		return generatedStringBuilder.toString();
+	}
+
+	public String getGeneratedText() {
+		return generatedText;
 	}
 }

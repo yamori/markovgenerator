@@ -1,8 +1,8 @@
 package org.kindzerske.markov.markovgenerator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * Hash table, implemented for Markov text generation purpose. Under the hash
@@ -176,6 +176,30 @@ public class MarkovHashMap<K, V> {
 		}
 		return returnObject;
 	}
+	
+	/**
+	 * Finds a random K key and returns the object.
+	 * @return random K key
+	 */
+	public K getRandomKey() {
+		@SuppressWarnings("unchecked")
+		K returnKey = (K) "";
+		
+		Random rand = new Random();
+		int tableIndex = rand.nextInt(hashMapTable.length);
+		LinkedList<HashMapEntry> bucket = hashMapTable[tableIndex];
+		while (bucket.size()==0) {
+			//Ensure we get a non-empty bucket
+			tableIndex = rand.nextInt(hashMapTable.length);
+			bucket = hashMapTable[tableIndex];
+		}
+		
+		int bucketIndex = rand.nextInt(bucket.size());
+		returnKey = (K) bucket.get(bucketIndex).key;
+		//System.out.println(bucket.get(bucketIndex).toString());
+
+		return returnKey;
+	}
 
 	public boolean containsKey(K queryKey) {
 		// Determines if the MarkovHashMap already contains the <K>queryKey
@@ -199,7 +223,7 @@ public class MarkovHashMap<K, V> {
 			LinkedList<HashMapEntry> bin = hashMapTable[n];
 			for (int m = 0; m < bin.size(); m++) {
 				HashMapEntry hashMap = bin.get(m);
-				returnString += "\n  " + hashMap.key + " " + hashMap.value.toString();
+				returnString += "\n  " + hashMap.value.toString();
 			}
 		}
 		return returnString;

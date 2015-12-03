@@ -31,7 +31,7 @@ public class Markov {
 		if (subsequentMap.containsKey(subsequentChar)) {
 			// Update the count for this char
 			int charCount = subsequentMap.get(subsequentChar);
-			subsequentMap.put(subsequentChar, charCount);
+			subsequentMap.put(subsequentChar, charCount+1);
 		} else {
 			// Add the new char
 			subsequentMap.put(subsequentChar, 1);
@@ -55,6 +55,11 @@ public class Markov {
 				//Iterate over number of occurrences
 				weightedSubsequentCharArray.add(currentChar);
 			}
+		}
+		
+		// Print out any opportunities for the generated text to bifurcate
+		if (subsequentMap.size()>1) {
+			System.out.println("  Bifurcation: '" + this.subString + "'; " + weightedSubsequentCharArray.toString());
 		}
 		
 		Random rand = new Random();
