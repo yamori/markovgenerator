@@ -52,6 +52,19 @@ public class TextGenerator {
 		TextGenerator textGenerator = new TextGenerator(k, m, files[textN].toString());
 	}
 
+	/**
+	 * Constructs the generator with basic params and builds the Markov hashmap
+	 * with the specified file.
+	 * 
+	 * @param kOrder
+	 *            Number of chars used for substrings for the markov to key off
+	 *            of (usually in range 6..8)
+	 * @param textLength
+	 *            Length of the desired generated text
+	 * @param textFileLocation
+	 *            Path+filename to the source text used for constructing the
+	 *            markov
+	 */
 	public TextGenerator(int kOrder, int textLength, String textFileLocation) {
 		this.kOrder = kOrder;
 		this.textLength = textLength;
@@ -62,7 +75,7 @@ public class TextGenerator {
 		this.markovHashMap = new MarkovHashMap<String, Markov>(11, (float) 0.75);
 
 		constructMarkovHashMap();
-		//System.out.println(this.markovHashMap.toString());
+		// System.out.println(this.markovHashMap.toString());
 	}
 
 	private void readTextFile() {
@@ -93,10 +106,10 @@ public class TextGenerator {
 		// the substring with subsequent char into the hash
 
 		for (int n = 0; n < (this.originalTextFile.length() - this.kOrder); n++) {
-			
+
 			String subString = this.originalTextFile.substring(n, n + this.kOrder);
 			Character subsequentChat = this.originalTextFile.charAt(n + this.kOrder);
-			
+
 			System.out.println(subString + "," + subsequentChat);
 
 			if (!this.markovHashMap.containsKey(subString)) {
