@@ -13,7 +13,7 @@ import java.util.Scanner;
  * markov hash map.
  * 
  * @author matthew.kindzerske
- *
+ * 
  */
 public class TextGenerator {
 
@@ -49,13 +49,13 @@ public class TextGenerator {
 		System.out.print(" Choose from above texts: ");
 		int textN = scanner.nextInt();
 		System.out.println();
-		
+
 		scanner.close();
 
 		TextGenerator textGenerator = new TextGenerator(k, m, files[textN].toString());
-		System.out.println(String.format("*** Final Generated Text (kOrder=%d, textLength=%d, textFileLocation='%s' )", k, m,
-				files[textN].toString()));
-		System.out.println( textGenerator.getGeneratedText() );
+		System.out.println(String.format("*** Final Generated Text (kOrder=%d, textLength=%d, textFileLocation='%s' )",
+				k, m, files[textN].toString()));
+		System.out.println(textGenerator.getGeneratedText());
 	}
 
 	/**
@@ -100,7 +100,13 @@ public class TextGenerator {
 		try {
 			while ((r = fileReader.read()) != -1) {
 				char ch = (char) r;
-				stringBuilder.append(ch);
+				if (ch != '\n' && ch != '\r') {
+					// Non-newline characters.
+					stringBuilder.append(ch);
+				} else {
+					// Substitute white space for newlines
+					stringBuilder.append(' ');
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
