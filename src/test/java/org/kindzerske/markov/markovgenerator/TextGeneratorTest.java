@@ -9,9 +9,12 @@ public class TextGeneratorTest extends TestCase {
 		// may not be able to fulfill large values of textLength but the
 		// class should be robust to handle it the scenario.
 		int desiredTextLength = 10000;
-		TextGenerator textGenerator = new TextGenerator(5, desiredTextLength,
+		TextGenerator textGenerator = new TextGenerator();
+
+		String generatedText = textGenerator.generateString(5, desiredTextLength,
 				"src/main/resources/PaulGraham_September2013_veryshort.txt");
-		System.out.println(textGenerator.getGeneratedText());
-		assertTrue(textGenerator.getGeneratedText().length() < desiredTextLength);
+
+		System.out.println(generatedText);
+		assertTrue(generatedText.length() < desiredTextLength);
 	}
 }

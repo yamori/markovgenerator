@@ -7,11 +7,13 @@ MarkovHashMap.Implement the random Key method in Markov Hash Map
 TextGenerator.Build the new text (seperate method)
 TextGenerator.Junits? for when the markov hashmap is small, execution still completes but with generated text less than desired length.
 
-HERE
+
 
 Execution strategy.
 	Instantiating object does not do anything!!
 	generateString should be public, put everything through there.
+	
+HERE
 
 Apache CLI.
 Main() - CLI take location, k, and n.  otherwise do scanner input and present options for the locally saved sample files

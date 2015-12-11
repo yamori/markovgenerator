@@ -51,38 +51,65 @@ public class TextGenerator {
 		System.out.println();
 
 		scanner.close();
-
-		TextGenerator textGenerator = new TextGenerator(k, m, files[textN].toString());
+		
+		TextGenerator textGenerator = new TextGenerator();
+		String generatedText = textGenerator.generateString(k, m, files[textN].toString());
 		System.out.println(String.format("*** Final Generated Text (kOrder=%d, textLength=%d, textFileLocation='%s' )",
 				k, m, files[textN].toString()));
-		System.out.println(textGenerator.getGeneratedText());
+		System.out.println(generatedText); // Also can be access with getGenerated
 	}
 
 	/**
-	 * Constructs the generator with basic params and builds the Markov hashmap
-	 * with the specified file.
+	 * Generates the markov hashmap using the included paramaters, and also
+	 * generates the markov text (of length textLength) using the created markov
+	 * hashmap.
 	 * 
 	 * @param kOrder
 	 *            Number of chars used for substrings for the markov to key off
-	 *            of (usually in range 6..8)
+	 *            of (usually 6..8)
 	 * @param textLength
 	 *            Length of the desired generated text
 	 * @param textFileLocation
 	 *            Path+filename to the source text used for constructing the
-	 *            markov
+	 *            markov hashmap
+	 * @return
 	 */
-	public TextGenerator(int kOrder, int textLength, String textFileLocation) {
+	public String generateString(int kOrder, int textLength, String textFileLocation) {
+		// Capture as instance vars.
 		this.kOrder = kOrder;
 		this.textLength = textLength;
 		this.textFileLocation = textFileLocation;
 
+		// Read the file
 		readTextFile();
 
+		// Instantiate the hashmp, and populate it
 		this.markovHashMap = new MarkovHashMap<String, Markov>(11, (float) 0.75);
-
 		constructMarkovHashMap();
 
-		this.generatedText = generateString();
+		// Ultimate the generated string.
+		StringBuilder generatedStringBuilder = new StringBuilder();
+
+		// Start with a random K key from the existing MarkovHashMap. This
+		// ensures a valid starting point which will have at least one
+		// subsequent character. Depending on the nature and length of the
+		// original text, this method will attempt to generate a text of length
+		// this.textLength
+		String subString = this.markovHashMap.getRandomKey();
+		generatedStringBuilder.append(subString);
+
+		Markov markov = this.markovHashMap.get(subString);
+		while (markov != null && generatedStringBuilder.length() < this.textLength) {
+			System.out.println(generatedStringBuilder);
+			// Exits if no subsequent Markov is found for the given subString
+			generatedStringBuilder.append(markov.getRandomSubsequentChar());
+			subString = generatedStringBuilder.substring(generatedStringBuilder.length() - this.kOrder,
+					generatedStringBuilder.length());
+			// Find the next Markov
+			markov = this.markovHashMap.get(subString);
+		}
+
+		return generatedStringBuilder.toString();
 	}
 
 	private void readTextFile() {
@@ -134,35 +161,6 @@ public class TextGenerator {
 				this.markovHashMap.put(subString, markov);
 			}
 		}
-	}
-
-	/**
-	 * A valid MarkovHashMap must be created before this method is called, which
-	 * is done by using the TextGenerator constructor.
-	 */
-	private String generateString() {
-		StringBuilder generatedStringBuilder = new StringBuilder();
-
-		// Start with a random K key from the existing MarkovHashMap. This
-		// ensures a valid starting point which will have at least one
-		// subsequent character. Depending on the nature and length of the
-		// original text, this method will attempt to generate a text of length
-		// this.textLength
-		String subString = this.markovHashMap.getRandomKey();
-		generatedStringBuilder.append(subString);
-
-		Markov markov = this.markovHashMap.get(subString);
-		while (markov != null && generatedStringBuilder.length() < this.textLength) {
-			System.out.println(generatedStringBuilder);
-			// Exits if no subsequent Markov is found for the given subString
-			generatedStringBuilder.append(markov.getRandomSubsequentChar());
-			subString = generatedStringBuilder.substring(generatedStringBuilder.length() - this.kOrder,
-					generatedStringBuilder.length());
-			// Find the next Markov
-			markov = this.markovHashMap.get(subString);
-		}
-
-		return generatedStringBuilder.toString();
 	}
 
 	public String getGeneratedText() {
