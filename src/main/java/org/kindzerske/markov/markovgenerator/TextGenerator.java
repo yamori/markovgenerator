@@ -7,6 +7,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 /**
  * Beginning point for the program, accepts basic parameters for execution
  * before reading file, creating markov hash map, and generating text using the
@@ -20,43 +27,80 @@ public class TextGenerator {
 	// At construction/instantiation
 	private int kOrder;
 	private int textLength;
+	
 	// Subsequent member vars
 	private String textFileLocation;
 	private String originalTextFile;
 	MarkovHashMap<String, Markov> markovHashMap;
 	private String generatedText;
+	
+	// CLI options
+	private final static String INTERACTIVE_FLAG = "i";
 
 	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
 
-		// Get basic parameters
-		System.out.print(" Enter kOrder (usually ranged [6..8]): ");
-		int k = scanner.nextInt();
-		System.out.print(" Enter desired output length: ");
-		int m = scanner.nextInt();
+		// @formatter:off
+		/**
+		 * Handles the CLI arguments, there are two modes: 
+		 *   1) CLI params for execution 
+		 *   2) -i interactive flag for Scanner input (demo purposes)
+		 */
+		//@formatter:on
+		Options options = new Options();
+		options.addOption(INTERACTIVE_FLAG,
+				"interactive mode for demo purposes, this flag will take precedence over other cli flags");
 
-		// List texts and get selection
-		File dir = new File("src\\main\\resources\\");
-		File[] files = dir.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".txt");
-			}
-		});
-
-		for (int n = 0; n < files.length; n++) {
-			System.out.println("[" + n + "] " + files[n]);
+		CommandLineParser parser = new DefaultParser();
+		CommandLine cmd = null;
+		try {
+			cmd = parser.parse(options, args);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
 		}
-		System.out.print(" Choose from above texts: ");
-		int textN = scanner.nextInt();
-		System.out.println();
-
-		scanner.close();
 		
+		int markovKeyLength = 0;
+		int desiredTextLength = 0;
+		String fileNamePath = "";
+
+		if (cmd.hasOption(INTERACTIVE_FLAG)) {
+			Scanner scanner = new Scanner(System.in);
+
+			// Get basic parameters
+			System.out.print(" Enter kOrder (usually ranged [6..8]): ");
+			markovKeyLength = scanner.nextInt();
+			System.out.print(" Enter desired output length: ");
+			desiredTextLength = scanner.nextInt();
+
+			// List texts and get selection
+			File dir = new File("src\\main\\resources\\");
+			File[] files = dir.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".txt");
+				}
+			});
+
+			for (int n = 0; n < files.length; n++) {
+				System.out.println("[" + n + "] " + files[n]);
+			}
+			System.out.print(" Choose from above texts: ");
+			int textN = scanner.nextInt();
+			fileNamePath = files[textN].toString();
+			System.out.println();
+
+			scanner.close();
+		} else {
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("java -jar MarkovGenerator.jar", options);
+			// Parameters not correctly determined, terminate.
+			return;
+		}
+
 		TextGenerator textGenerator = new TextGenerator();
-		String generatedText = textGenerator.generateString(k, m, files[textN].toString());
+		String generatedText = textGenerator.generateString(markovKeyLength, desiredTextLength, fileNamePath);
 		System.out.println(String.format("*** Final Generated Text (kOrder=%d, textLength=%d, textFileLocation='%s' )",
-				k, m, files[textN].toString()));
-		System.out.println(generatedText); // Also can be access with getGenerated
+				markovKeyLength, desiredTextLength, fileNamePath));
+		System.out.println(generatedText); // Also can be access with
+											// getGenerated
 	}
 
 	/**

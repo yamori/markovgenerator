@@ -13,10 +13,15 @@ Execution strategy.
 	Instantiating object does not do anything!!
 	generateString should be public, put everything through there.
 	
-HERE
+
 
 Apache CLI.
-Main() - CLI take location, k, and n.  otherwise do scanner input and present options for the locally saved sample files
+takes interactive flag, and goes to scanner for input.
+
+HERE
+
+
+Main() - CLI take location, k, and m, if no -i then executes as such.
 verbose flag for printing out bifurcations. also as scanner input.
 Make it executable jar through maven.  Compilable etc?
 All.Tidy up, comment with javadocs for all public methods.
