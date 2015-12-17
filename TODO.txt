@@ -18,12 +18,14 @@ Execution strategy.
 Apache CLI.
 takes interactive flag, and goes to scanner for input.
 
+Make it executable jar through maven.  Compilable etc?
+
 HERE
 
 
 Main() - CLI take location, k, and m, if no -i then executes as such.
 verbose flag for printing out bifurcations. also as scanner input.
-Make it executable jar through maven.  Compilable etc?
+
 All.Tidy up, comment with javadocs for all public methods.
 
 Readme doc

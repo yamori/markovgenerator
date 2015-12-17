@@ -12,7 +12,7 @@ public class TextGeneratorTest extends TestCase {
 		TextGenerator textGenerator = new TextGenerator();
 
 		String generatedText = textGenerator.generateString(5, desiredTextLength,
-				"src/main/resources/PaulGraham_September2013_veryshort.txt");
+				Utilities.SAMPLE_TEXTS_DIR + "PaulGraham_September2013_veryshort.txt");
 
 		System.out.println(generatedText);
 		assertTrue(generatedText.length() < desiredTextLength);

@@ -1,10 +1,8 @@
 package org.kindzerske.markov.markovgenerator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
@@ -27,13 +25,13 @@ public class TextGenerator {
 	// At construction/instantiation
 	private int kOrder;
 	private int textLength;
-	
+
 	// Subsequent member vars
 	private String textFileLocation;
 	private String originalTextFile;
 	MarkovHashMap<String, Markov> markovHashMap;
 	private String generatedText;
-	
+
 	// CLI options
 	private final static String INTERACTIVE_FLAG = "i";
 
@@ -57,7 +55,7 @@ public class TextGenerator {
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		int markovKeyLength = 0;
 		int desiredTextLength = 0;
 		String fileNamePath = "";
@@ -66,25 +64,28 @@ public class TextGenerator {
 			Scanner scanner = new Scanner(System.in);
 
 			// Get basic parameters
-			System.out.print(" Enter kOrder (usually ranged [6..8]): ");
+			System.out.print(" Enter kOrder (usually ranged 6..8): ");
 			markovKeyLength = scanner.nextInt();
-			System.out.print(" Enter desired output length: ");
+			System.out.print(" Enter desired output length (i.g. 300): ");
 			desiredTextLength = scanner.nextInt();
 
-			// List texts and get selection
-			File dir = new File("src\\main\\resources\\");
-			File[] files = dir.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".txt");
-				}
-			});
-
-			for (int n = 0; n < files.length; n++) {
-				System.out.println("[" + n + "] " + files[n]);
+			// List texts for selection
+			String[] sampleTexts = {};
+			try {
+				sampleTexts = Utilities.getResourceListing(TextGenerator.class, Utilities.SAMPLE_TEXTS_DIR);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			for (int n = 0; n < sampleTexts.length; n++) {
+				System.out.println("[" + n + "] " + sampleTexts[n]);
+			}
+
+			// Get choice
 			System.out.print(" Choose from above texts: ");
 			int textN = scanner.nextInt();
-			fileNamePath = files[textN].toString();
+			fileNamePath = Utilities.SAMPLE_TEXTS_DIR + sampleTexts[textN].toString();
 			System.out.println();
 
 			scanner.close();
@@ -125,7 +126,7 @@ public class TextGenerator {
 		this.textFileLocation = textFileLocation;
 
 		// Read the file
-		readTextFile();
+		readTextStream();
 
 		// Instantiate the hashmp, and populate it
 		this.markovHashMap = new MarkovHashMap<String, Markov>(11, (float) 0.75);
@@ -156,20 +157,17 @@ public class TextGenerator {
 		return generatedStringBuilder.toString();
 	}
 
-	private void readTextFile() {
-		// Setup the FileReader
-		FileReader fileReader = null;
-		try {
-			fileReader = new FileReader(this.textFileLocation);
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found.");
-			e.printStackTrace();
-		}
+	/**
+	 * Reads a text stream, turns carriage returns into white space, and appends
+	 * entire file to class var
+	 */
+	private void readTextStream() {
+		InputStream in = this.getClass().getResourceAsStream("/" + this.textFileLocation);
 
 		StringBuilder stringBuilder = new StringBuilder();
 		int r;
 		try {
-			while ((r = fileReader.read()) != -1) {
+			while ((r = in.read()) != -1) {
 				char ch = (char) r;
 				if (ch != '\n' && ch != '\r') {
 					// Non-newline characters.
