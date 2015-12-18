@@ -1,5 +1,7 @@
 package org.kindzerske.markov.markovgenerator;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -34,6 +36,9 @@ public class TextGenerator {
 
 	// CLI options
 	private final static String INTERACTIVE_FLAG = "i";
+	private final static String FILE_PATH_FLAG = "f";
+	private final static String MARKOV_ORDER_FLAG = "k";
+	private final static String TEXT_LENGTH_FLAG = "m";
 
 	public static void main(String[] args) {
 
@@ -47,20 +52,27 @@ public class TextGenerator {
 		Options options = new Options();
 		options.addOption(INTERACTIVE_FLAG,
 				"interactive mode for demo purposes, this flag will take precedence over other cli flags");
+		options.addOption(FILE_PATH_FLAG, true, "path to text file with sample text for markov generation");
+		options.addOption(MARKOV_ORDER_FLAG, true, "markov parameter for key length");
+		options.addOption(TEXT_LENGTH_FLAG, true,
+				"desired length of output text which may not be fulfilled if sample text is not sufficiently large");
 
 		CommandLineParser parser = new DefaultParser();
-		CommandLine cmd = null;
+		CommandLine cmdLine = null;
 		try {
-			cmd = parser.parse(options, args);
+			cmdLine = parser.parse(options, args);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
 
+		// Parameters needed for execution
 		int markovKeyLength = 0;
 		int desiredTextLength = 0;
 		String fileNamePath = "";
 
-		if (cmd.hasOption(INTERACTIVE_FLAG)) {
+		// Deciding on interactive/scanner mode, or if all params were included
+		// via command line
+		if (cmdLine.hasOption(INTERACTIVE_FLAG)) {
 			Scanner scanner = new Scanner(System.in);
 
 			// Get basic parameters
@@ -85,13 +97,20 @@ public class TextGenerator {
 			// Get choice
 			System.out.print(" Choose from above texts: ");
 			int textN = scanner.nextInt();
-			fileNamePath = Utilities.SAMPLE_TEXTS_DIR + sampleTexts[textN].toString();
+			fileNamePath = "/" + Utilities.SAMPLE_TEXTS_DIR + sampleTexts[textN].toString();
 			System.out.println();
 
 			scanner.close();
+		} else if (cmdLine.hasOption(FILE_PATH_FLAG) & cmdLine.hasOption(MARKOV_ORDER_FLAG)
+				& cmdLine.hasOption(TEXT_LENGTH_FLAG)) {
+			// Get all the params from the CLI
+			markovKeyLength = Integer.parseInt(cmdLine.getOptionValue(MARKOV_ORDER_FLAG));
+			desiredTextLength = Integer.parseInt(cmdLine.getOptionValue(TEXT_LENGTH_FLAG));
+			fileNamePath = cmdLine.getOptionValue(FILE_PATH_FLAG);
 		} else {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("java -jar MarkovGenerator.jar", options);
+			formatter.printHelp("java -jar MarkovGenerator.jar [-flags]", " Use -i alone, or {-f,-k,-m} together",
+					options, "");
 			// Parameters not correctly determined, terminate.
 			return;
 		}
@@ -126,7 +145,7 @@ public class TextGenerator {
 		this.textFileLocation = textFileLocation;
 
 		// Read the file
-		readTextStream();
+		readTextStreamToSampleText();
 
 		// Instantiate the hashmp, and populate it
 		this.markovHashMap = new MarkovHashMap<String, Markov>(11, (float) 0.75);
@@ -158,28 +177,60 @@ public class TextGenerator {
 	}
 
 	/**
-	 * Reads a text stream, turns carriage returns into white space, and appends
-	 * entire file to class var
+	 * Takes the text location and tries to read as a project resource, if not
+	 * found then tries to read as a system file. Method appends entire file to
+	 * class var (while turning carriage returns into whitespace)
 	 */
-	private void readTextStream() {
-		InputStream in = this.getClass().getResourceAsStream("/" + this.textFileLocation);
-
+	private void readTextStreamToSampleText() {
+		// Accumulates the sample text.
 		StringBuilder stringBuilder = new StringBuilder();
-		int r;
-		try {
-			while ((r = in.read()) != -1) {
-				char ch = (char) r;
-				if (ch != '\n' && ch != '\r') {
-					// Non-newline characters.
-					stringBuilder.append(ch);
-				} else {
-					// Substitute white space for newlines
-					stringBuilder.append(' ');
+
+		InputStream in = this.getClass().getResourceAsStream(this.textFileLocation);
+		// Need to infer whether the location is a project resource, or a path
+		// to an external file
+		if (in != null) {
+			// Found a project resource
+			int r;
+			try {
+				while ((r = in.read()) != -1) {
+					char ch = (char) r;
+					if (ch != '\n' && ch != '\r') {
+						// Non-newline characters.
+						stringBuilder.append(ch);
+					} else {
+						// Substitute white space for newlines
+						stringBuilder.append(' ');
+					}
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} else {
+			// textFileLocation does not describe a project resource, instead
+			// attempt to read as a File
+			FileReader fileReader = null;
+			try {
+				fileReader = new FileReader(this.textFileLocation);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			int r;
+			try {
+				while ((r = fileReader.read()) != -1) {
+					char ch = (char) r;
+					if (ch != '\n' && ch != '\r') {
+						// Non-newline characters.
+						stringBuilder.append(ch);
+					} else {
+						// Substitute white space for newlines
+						stringBuilder.append(' ');
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+
 		this.originalTextFile = stringBuilder.toString();
 	}
 
