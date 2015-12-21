@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Scanner;
 
@@ -39,6 +41,8 @@ public class TextGenerator {
 	private final static String FILE_PATH_FLAG = "f";
 	private final static String MARKOV_ORDER_FLAG = "k";
 	private final static String TEXT_LENGTH_FLAG = "m";
+	private final static String VERBOSITY_FLAG = "v";
+	
 
 	public static void main(String[] args) {
 
@@ -56,6 +60,7 @@ public class TextGenerator {
 		options.addOption(MARKOV_ORDER_FLAG, true, "markov parameter for key length");
 		options.addOption(TEXT_LENGTH_FLAG, true,
 				"desired length of output text which may not be fulfilled if sample text is not sufficiently large");
+		options.addOption(VERBOSITY_FLAG,"indicates verbose command line output");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmdLine = null;
@@ -69,6 +74,7 @@ public class TextGenerator {
 		int markovKeyLength = 0;
 		int desiredTextLength = 0;
 		String fileNamePath = "";
+		boolean verboseFlag = true;
 
 		// Deciding on interactive/scanner mode, or if all params were included
 		// via command line
@@ -80,6 +86,8 @@ public class TextGenerator {
 			markovKeyLength = scanner.nextInt();
 			System.out.print(" Enter desired output length (i.g. 300): ");
 			desiredTextLength = scanner.nextInt();
+			System.out.print(" Verbose (y/n)?: ");
+			verboseFlag = scanner.next().trim().contains("y") ? true : false;
 
 			// List texts for selection
 			String[] sampleTexts = {};
@@ -107,6 +115,7 @@ public class TextGenerator {
 			markovKeyLength = Integer.parseInt(cmdLine.getOptionValue(MARKOV_ORDER_FLAG));
 			desiredTextLength = Integer.parseInt(cmdLine.getOptionValue(TEXT_LENGTH_FLAG));
 			fileNamePath = cmdLine.getOptionValue(FILE_PATH_FLAG);
+			verboseFlag = cmdLine.hasOption(VERBOSITY_FLAG)? true : false;
 		} else {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar MarkovGenerator.jar [-flags]", " Use -i alone, or {-f,-k,-m} together",
@@ -115,8 +124,24 @@ public class TextGenerator {
 			return;
 		}
 
+		// Manage the verbosity of TextGenerator
+		PrintStream originalStream = System.out;
+		PrintStream dummyStream = new PrintStream(new OutputStream() {
+			public void write(int b) {
+				// NO-OP
+			}
+		});
+		if (!verboseFlag) {
+			System.setOut(dummyStream);
+		}
+
 		TextGenerator textGenerator = new TextGenerator();
 		String generatedText = textGenerator.generateString(markovKeyLength, desiredTextLength, fileNamePath);
+
+		// Revert the System.out after verbosity management
+		System.setOut(originalStream);
+
+		// Print results
 		System.out.println(String.format("*** Final Generated Text (kOrder=%d, textLength=%d, textFileLocation='%s' )",
 				markovKeyLength, desiredTextLength, fileNamePath));
 		System.out.println(generatedText); // Also can be access with
