@@ -30,4 +30,5 @@ HERE
 
 Readme doc
 	Decent explanation of the data struct.
-Github
+
+Upload as maven dependency?  (Figure this out)
