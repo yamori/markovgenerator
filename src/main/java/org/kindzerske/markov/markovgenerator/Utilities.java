@@ -12,7 +12,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public final class Utilities {
-	
+
+	/**
+	 * Directory where sample text files are kept in the java project
+	 */
 	public static String SAMPLE_TEXTS_DIR = "sample_texts/";
 
 	/**
@@ -67,7 +70,7 @@ public final class Utilities {
 					int checkSubdir = entry.indexOf("/");
 					if (checkSubdir >= 0) {
 						// if it is a subdirectory, don't return
-					} else if (entry.length()!=0) {
+					} else if (entry.length() != 0) {
 						// Files only
 						result.add(entry);
 					}

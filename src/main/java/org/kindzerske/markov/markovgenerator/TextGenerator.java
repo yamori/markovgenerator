@@ -42,7 +42,6 @@ public class TextGenerator {
 	private final static String MARKOV_ORDER_FLAG = "k";
 	private final static String TEXT_LENGTH_FLAG = "m";
 	private final static String VERBOSITY_FLAG = "v";
-	
 
 	public static void main(String[] args) {
 
@@ -60,7 +59,7 @@ public class TextGenerator {
 		options.addOption(MARKOV_ORDER_FLAG, true, "markov parameter for key length");
 		options.addOption(TEXT_LENGTH_FLAG, true,
 				"desired length of output text which may not be fulfilled if sample text is not sufficiently large");
-		options.addOption(VERBOSITY_FLAG,"indicates verbose command line output");
+		options.addOption(VERBOSITY_FLAG, "indicates verbose command line output");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmdLine = null;
@@ -115,7 +114,7 @@ public class TextGenerator {
 			markovKeyLength = Integer.parseInt(cmdLine.getOptionValue(MARKOV_ORDER_FLAG));
 			desiredTextLength = Integer.parseInt(cmdLine.getOptionValue(TEXT_LENGTH_FLAG));
 			fileNamePath = cmdLine.getOptionValue(FILE_PATH_FLAG);
-			verboseFlag = cmdLine.hasOption(VERBOSITY_FLAG)? true : false;
+			verboseFlag = cmdLine.hasOption(VERBOSITY_FLAG) ? true : false;
 		} else {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar MarkovGenerator.jar [-flags]", " Use -i alone, or {-f,-k,-m} together",
@@ -281,6 +280,12 @@ public class TextGenerator {
 		}
 	}
 
+	/**
+	 * Get the generated text after generateString() was last successfully
+	 * invoked.
+	 * 
+	 * @return String generated text
+	 */
 	public String getGeneratedText() {
 		return generatedText;
 	}

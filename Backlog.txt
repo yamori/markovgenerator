@@ -24,9 +24,9 @@ Main() - CLI take location, k, and m, if no -i then executes as such.
 
 verbose flag for printing out bifurcations. also as scanner input.
 
-HERE
-
 All.Tidy up, comment with javadocs for all public methods.
+
+HERE
 
 Readme doc
 	Decent explanation of the data struct.
