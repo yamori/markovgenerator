@@ -3,7 +3,7 @@
 ## Data Structure
 A sample text file is supplied which is used to train the dictionary of keys (of user determined order 'k'), and subsequent next characters. The training from the sample text is exhaustive and is by character (not words).
 
-For performance, the key is is hashed and placed into a respective linked-list of Markov 'mappings.'  During training the hash table will resize once a load factor has been hit.
+For performance, the key is is hashed and placed into a respective linked-list of Markov 'mappings.'  During training the hash table will resize to the next largest prime number when the amortizing load factor has been hit.
 
 ## Usage
 
@@ -45,3 +45,16 @@ long as the note wi
 *** Final Generated Text (kOrder=7, textLength=20, textFileLocation='/sample_texts/PaulGraham_September2013.txt' )
 long as the note wit
 ```
+
+### CLI (user specified text file for training)
+` java -jar MarkovGenerator-jar-with-dependencies.jar -f my_folder/BarackObama_2008.txt -k 7 -m 15 -v`
+
+(Note the `v` flag for verbose output is optional.)
+
+### Java Use
+
+`TextGenerator textGenerator = new TextGenerator();`
+
+`String sampleText = textGenerator.generateString(7,100,"myFolder/DTrumpSpeech.txt");`
+
+(Note that the verbose output will still print to the System.out.  Maybe a future revision should make this optional.)
