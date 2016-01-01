@@ -5,6 +5,8 @@ A sample text file is supplied which is used to train the dictionary of keys (of
 
 For performance, the key is is hashed and placed into a respective linked-list of Markov 'mappings.'  During training the hash table will resize to the next largest prime number when the amortizing load factor has been hit.
 
+Credit for data structure design to [https://github.com/dan-f/Markov-Text-Generator](https://github.com/dan-f/Markov-Text-Generator)
+
 ## Usage
 
 ### CLI (using project sample texts)
