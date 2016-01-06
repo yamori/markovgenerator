@@ -3,12 +3,21 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.kindzerske.markov</groupId>
-	<artifactId>markovgenerator</artifactId>
+	<artifactId>markov-generator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>markovgenerator</name>
-	<url>http://maven.apache.org</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<name>Markov Generator</name>
+	<description>(Java) Markov chain text generator</description>
+	<url>https://github.com/yamori/markovgenerator</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,7 +44,7 @@
 
 
 	<build>
-		<finalName>MarkovGenerator-${version}</finalName>
+		<finalName>markov-generator-${version}</finalName>
 		<plugins>
 
 			<!-- download source code in Eclipse, best practice -->
@@ -61,7 +70,7 @@
 			</plugin>
 
 
-			
+
 
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
