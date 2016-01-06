@@ -1,5 +1,14 @@
 # MarkovGenerator
 (Java) Markov chain text generator.
+## Quick Start
+Make some text:
+
+`TextGenerator textGenerator = new TextGenerator();`
+
+`String sampleText = textGenerator.generateString(7,100,"myFolder/DTrumpSpeech.txt");`
+
+'7' is the k-order, '100' is the length of the generated text, and the last parameter is the path to your sample file (which should be large like an article or a speech).
+
 ## Data Structure
 A sample text file is supplied which is used to train the dictionary of keys (of user determined order 'k'), and subsequent next characters. The training from the sample text is exhaustive and is by character (not words).
 
